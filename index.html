@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>World Currency Converter</title>
+<link rel="stylesheet" href="style.css">
+ 
+
+</head>
+
+<body>
+  <div class="currency-rain"></div>
+
+<div class="card">
+  <h2>🌍 World Currency Converter</h2>
+
+  <input type="number" id="amount" placeholder="Enter amount">
+
+  <select id="from"></select>
+  <select id="to"></select>
+
+  <button onclick="convert()">Convert</button>
+
+  <div class="result" id="result">result</div>
+</div>
+
+<script>
+const from = document.getElementById("from");
+const to = document.getElementById("to");
+let rates = {};
+let names = {};
+
+// currency names load
+fetch("https://api.exchangerate.host/symbols")
+.then(r => r.json())
+.then(d => names = d.symbols);
+
+// rates load (ALL currencies)
+fetch("https://open.er-api.com/v6/latest/USD")
+.then(r => r.json())
+.then(d => {
+  rates = d.rates;
+
+  for(let c in rates){
+    let n = names[c]?.description || "Currency";
+    let o1 = new Option(`${c} - ${n}`, c);
+    let o2 = new Option(`${c} - ${n}`, c);
+    from.add(o1);
+    to.add(o2);
+  }
+  from.value="USD";
+  to.value="BDT";
+});
+
+function convert(){
+  let amt = amount.value;
+  if(!amt){ alert("Amount please😎"); return; }
+
+  let usd = amt / rates[from.value];
+  let res = usd * rates[to.value];
+
+  result.innerHTML = `${amt} ${from.value} = ${res.toFixed(4)} ${to.value}`;
+}
+</script>
+   <script>
+const currencies = [
+"USD","EUR","BDT","INR","JPY","GBP","AUD","CAD","CHF","CNY",
+"SAR","AED","KWD","QAR","MYR","SGD","THB","KRW","PKR","NGN",
+"ZAR","BRL","ARS","MXN","RUB","TRY","IDR","PHP","VND"
+];
+
+const rain = document.querySelector(".currency-rain");
+
+for(let i=0;i<80;i++){
+  const s=document.createElement("span");
+  s.innerText=currencies[Math.floor(Math.random()*currencies.length)];
+  s.style.left=Math.random()*100+"%";
+  s.style.animationDuration=(5+Math.random()*7)+"s";
+  s.style.animationDelay=Math.random()*5+"s";
+  rain.appendChild(s);
+}
+</script>
+</body>
+</html>
+
