@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>World Currency Converter</title>
+
+<style>
+body{
+  margin:0;
+  font-family:Arial, sans-serif;
+  background:red;
+  min-height:100vh;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  color:#fff;
+}
+.card{
+  background:rgba(0,0,0,.45);
+  padding:20px;
+  width:100%;
+  max-width:420px;
+  border-radius:15px;
+}
+h2{text-align:center}
+input,select,button{
+  width:100%;
+  padding:12px;
+  margin-top:10px;
+  border-radius:8px;
+  border:none;
+  font-size:15px;
+}
+button{
+  background:yellow;
+  font-weight:bold;
+  cursor:pointer;
+}
+.result{
+  margin-top:15px;
+  text-align:center;
+  font-size:18px;
+  font-weight:bold;
+}
+</style>
+</head>
+
+<body>
+<div class="card">
+  <h2>🌍 World Currency Converter</h2>
+
+  <input type="number" id="amount" placeholder="Enter amount">
+
+  <select id="from"></select>
+  <select id="to"></select>
+
+  <button onclick="convert()">Convert</button>
+
+  <div class="result" id="result">result</div>
+</div>
+
+<script>
+const from = document.getElementById("from");
+const to = document.getElementById("to");
+let rates = {};
+let names = {};
+
+// currency names load
+fetch("https://api.exchangerate.host/symbols")
+.then(r => r.json())
+.then(d => names = d.symbols);
+
+// rates load (ALL currencies)
+fetch("https://open.er-api.com/v6/latest/USD")
+.then(r => r.json())
+.then(d => {
+  rates = d.rates;
+
+  for(let c in rates){
+    let n = names[c]?.description || "Currency";
+    let o1 = new Option(`${c} - ${n}`, c);
+    let o2 = new Option(`${c} - ${n}`, c);
+    from.add(o1);
+    to.add(o2);
+  }
+  from.value="USD";
+  to.value="BDT";
+});
+
+function convert(){
+  let amt = amount.value;
+  if(!amt){ alert("Amount দাও boss 😎"); return; }
+
+  let usd = amt / rates[from.value];
+  let res = usd * rates[to.value];
+
+  result.innerHTML = `${amt} ${from.value} = ${res.toFixed(4)} ${to.value}`;
+}
+</script>
+</body>
+</html>
+
